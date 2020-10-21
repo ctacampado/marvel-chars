@@ -56,8 +56,8 @@ func (b *Builder) Name(n string) *Builder {
 }
 
 // Router sets the service router
-func (b *Builder) Router(r *chi.Mux, f func(*chi.Mux)) *Builder {
-	b.s.SvcRouter.Mux = r
+func (b *Builder) Router(f func(*chi.Mux)) *Builder {
+	b.s.SvcRouter.Mux = chi.NewRouter()
 	b.s.SvcRouter.initFunc = f
 	return b
 }
