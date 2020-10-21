@@ -1,4 +1,4 @@
-package main
+package marvelch
 
 import (
 	"github.com/go-chi/chi"

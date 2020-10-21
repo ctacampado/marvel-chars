@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"marvel-chars/internal/service"
+	"marvel-chars/internal/marvelch"
 )
 
 func main() {
@@ -12,10 +12,6 @@ func main() {
 }
 
 func run() error {
-	b := service.Builder{}
-	s := b.
-		Name("characters").
-		Router(SetRoutes).
-		Build()
+	s := marvelch.MarvelCharSvc{}
 	return s.Start("listening at localhost:")
 }
