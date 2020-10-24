@@ -13,5 +13,5 @@ func main() {
 
 func run() error {
 	s := marvelch.MarvelCharSvc{}
-	return s.Start("listening at localhost:")
+	return s.Start("listening at ")
 }

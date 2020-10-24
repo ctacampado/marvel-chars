@@ -1,4 +1,4 @@
-package cache
+package kvstore
 
 import (
 	"fmt"
@@ -31,9 +31,9 @@ func TestAddLookup(t *testing.T) {
 	}
 
 	tCache := New()
-	tCache.ADD(tc.Elem.ID, tc.Elem)
+	tCache.Set(tc.Elem.ID, tc.Elem)
 
-	if want, got := tc.Elem, tCache.LOOKUP(tc.Elem.ID); want != *got {
+	if want, got := tc.Elem, tCache.Get(tc.Elem.ID).(Test); want != got {
 		t.Errorf("want %+v got %+v | fail\n", want, got)
 	}
 }
@@ -48,13 +48,13 @@ func TestAddManyDeleteOne(t *testing.T) {
 	}
 
 	tCache := New()
-	want := make(map[string]interface{})
+	want := make(map[string]Test)
 	for _, tc := range tcs {
-		tCache.ADD(tc.Elem.ID, tc.Elem)
+		tCache.Set(tc.Elem.ID, tc.Elem)
 		want[tc.Elem.ID] = tc.Elem
 	}
 	delete(want, "1c2c3c")
-	tCache.DELETE("1c2c3c")
+	tCache.Delete("1c2c3c")
 	// tCache.PRINT()
 	//fmt.Printf("%+v", tCache)
 
