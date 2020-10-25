@@ -6,14 +6,14 @@ import (
 )
 
 // GetCharacterIDs return IDs of all marvel characters
-func GetCharacterIDs(c service.Cache) ([]int, error) {
-	ret := make([]int, 0)
+func GetCharacterIDs(c service.Cache) ([]int64, error) {
+	ret := make([]int64, 0)
 	res := c.Get("ALL")
 
 	data := res.(map[string]interface{})
 	for _, v := range data {
 		char := v.(map[string]interface{})
-		ret = append(ret, int(char["id"].(float64)))
+		ret = append(ret, int64(char["id"].(float64)))
 	}
 	log.Printf("%d\n", len(ret))
 	return ret, nil
@@ -25,7 +25,7 @@ func GetCharacterByID(c service.Cache, id string) MarvelAPIRsp {
 	res := c.Get(id)
 	char := res.(map[string]interface{})
 	return MarvelAPIRsp{
-		ID:   int(char["id"].(float64)),
+		ID:   int64(char["id"].(float64)),
 		Name: char["name"].(string),
 		Desc: char["description"].(string),
 	}

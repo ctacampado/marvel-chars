@@ -18,7 +18,7 @@ import (
 
 // MarvelAPIRsp response data to /characters/{id}
 type MarvelAPIRsp struct {
-	ID   int    `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 	Desc string `json:"description"`
 }
