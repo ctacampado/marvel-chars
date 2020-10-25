@@ -52,4 +52,3 @@ I used `go-swagger` for the API documentation UI. Install [go-swagger](https://g
 swagger serve api/swagger.yaml --no-ui
 ```
 ![img](assets/apidoc.PNG)
-

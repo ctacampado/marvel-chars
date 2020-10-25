@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"unsafe"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -39,6 +40,7 @@ type MarvelAPIReqParams struct {
 type MarvelAPIReqStats struct {
 	total int
 	ctr   int
+	sz    uintptr
 }
 
 // MarvelCharSvc service
@@ -129,7 +131,7 @@ func setSvcCache(c service.Cache, params *MarvelAPIReqParams) error {
 	log.Printf("starting to fetch...\n")
 	for {
 		log.Printf("fetching...\n")
-		if err = fetchDataFromMarvelAPI(*params, resp); err != nil {
+		if err = fetchDataFromMarvelAPI(*params, resp, stats); err != nil {
 			return fmt.Errorf("fetchDataFromMarvelAPI: %w", err)
 		}
 
@@ -139,12 +141,11 @@ func setSvcCache(c service.Cache, params *MarvelAPIReqParams) error {
 		}
 		params.offset += i
 
-		log.Printf("stats.total %d | stats.ctr %d\n", stats.total, stats.ctr)
+		log.Printf("stats.total %d | stats.ctr %d | stats.sz %d bytes\n", stats.total, stats.ctr, stats.sz)
 		if stats.total == stats.ctr {
 			break
 		}
 	}
-
 	return nil
 }
 
@@ -168,11 +169,13 @@ func newMarvelAPIReqParams() (*MarvelAPIReqParams, error) {
 	return &apiParams, nil
 }
 
-func fetchDataFromMarvelAPI(a MarvelAPIReqParams, rsp map[string]interface{}) error {
+func fetchDataFromMarvelAPI(a MarvelAPIReqParams, rsp map[string]interface{}, s *MarvelAPIReqStats) error {
 	b, err := callMarvelAPI(a.ts, a.pbkey, a.hash, strconv.Itoa(a.offset), strconv.Itoa(a.limit), a.url)
 	if err != nil {
 		return fmt.Errorf("failed callMarvelAPI: %w", err)
 	}
+	// update estimated cache size
+	s.sz += (unsafe.Sizeof(b) * uintptr(len(b)))
 
 	err = json.Unmarshal(b, &rsp)
 	if err != nil {
