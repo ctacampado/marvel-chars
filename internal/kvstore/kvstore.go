@@ -5,13 +5,10 @@ import (
 	"log"
 )
 
-// Store represents our cache which is a key-value store
+// Store is a key-value store
 type Store struct {
 	Data map[string]interface{} `json:"Data"`
 }
-
-// DATAFILE contains the filename
-var DATAFILE = "./datafile.json"
 
 // New returns a new store
 func New() *Store {
