@@ -35,9 +35,11 @@ type MarvelAPIReqParams struct {
 	url    string
 }
 
-// MarvelAPIReqStats is for determining how many times
-// we will be calling the Marvel API
-type MarvelAPIReqStats struct {
+// MarvelAPISvcStats contains service stats
+// total - number of characters available from API call
+// ctr   - number of characters fetched
+// sz    - size in bytes of the entire character set
+type MarvelAPISvcStats struct {
 	total int
 	ctr   int
 	sz    uintptr
@@ -47,7 +49,7 @@ type MarvelAPIReqStats struct {
 type MarvelCharSvc struct {
 	Svc    service.Service
 	Params *MarvelAPIReqParams
-	Stats  *MarvelAPIReqStats
+	Stats  *MarvelAPISvcStats
 }
 
 // Start the marvel characters service
@@ -126,7 +128,7 @@ func setSvcCache(c service.Cache, params *MarvelAPIReqParams) error {
 	}
 	log.Printf("done!\n")
 	resp := make(map[string]interface{})
-	stats := &MarvelAPIReqStats{}
+	stats := &MarvelAPISvcStats{}
 
 	log.Printf("starting to fetch...\n")
 	for {
@@ -169,7 +171,7 @@ func newMarvelAPIReqParams() (*MarvelAPIReqParams, error) {
 	return &apiParams, nil
 }
 
-func fetchDataFromMarvelAPI(a MarvelAPIReqParams, rsp map[string]interface{}, s *MarvelAPIReqStats) error {
+func fetchDataFromMarvelAPI(a MarvelAPIReqParams, rsp map[string]interface{}, s *MarvelAPISvcStats) error {
 	b, err := callMarvelAPI(a.ts, a.pbkey, a.hash, strconv.Itoa(a.offset), strconv.Itoa(a.limit), a.url)
 	if err != nil {
 		return fmt.Errorf("failed callMarvelAPI: %w", err)
@@ -201,7 +203,7 @@ func callMarvelAPI(ts, pbkey, hash, offset, limit, url string) ([]byte, error) {
 	return body, nil
 }
 
-func saveMarvelAPIResults(c service.Cache, r map[string]interface{}, s *MarvelAPIReqStats) (int, error) {
+func saveMarvelAPIResults(c service.Cache, r map[string]interface{}, s *MarvelAPISvcStats) (int, error) {
 	data := r["data"].(map[string]interface{})
 	results := data["results"].([]interface{})
 
