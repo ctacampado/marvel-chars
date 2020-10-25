@@ -51,5 +51,5 @@ I used `go-swagger` for the API documentation UI. Install [go-swagger](https://g
 ```
 swagger serve api/swagger.yaml --no-ui
 ```
-![img](public/apidoc.PNG)
+![img](assets/apidoc.PNG)
 
